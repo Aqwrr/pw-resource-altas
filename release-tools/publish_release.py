@@ -27,7 +27,8 @@ def publish(folder,repo,publish_now=False):
     user=request('GET',api+'/user')
     if user['login'].casefold()!=owner.casefold():raise RuntimeError('Локальная авторизация GitHub принадлежит другому пользователю.')
     repository=request('GET',api+'/repos/'+repo)
-    if repository['private'] or not repository.get('permissions',{}).get('push'):raise RuntimeError('Нужен публичный репозиторий с правом публикации.')
+    if not repository.get('permissions',{}).get('push'):raise RuntimeError('Нет права публикации в этом репозитории.')
+    if repository['private'] and publish_now:raise RuntimeError('Для обновлений без авторизации нужен публичный репозиторий. В приватном можно подготовить черновик без --publish.')
     feed=json.loads((folder/'atlas-release.json').read_text(encoding='utf-8'));package=folder/feed['package']['name']
     def digest(path):
         h=hashlib.sha256()
