@@ -1,0 +1,42 @@
+name: Windows release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atlas-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      PYTHONIOENCODING: utf-8
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install dependencies
+        run: python tools/project.py deps
+      - name: Check tag matches application version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          $version = python -c "import runpy; print(runpy.run_path('tools/project.py')['version']())"
+          if ($env:GITHUB_REF_NAME -ne "v$version") { throw 'Tag does not match VERSION' }
+      - name: Test, build and package
+        run: python tools/project.py release
+      - name: Publish stable update
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python tools/project.py publish

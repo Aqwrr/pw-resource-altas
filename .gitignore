@@ -18,3 +18,7 @@ assets/
 *.log
 .env*
 credentials*
+.cache/
+.local/
+.ruff_cache/
+build/
