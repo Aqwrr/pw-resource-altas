@@ -158,12 +158,15 @@ def native_map_parameters(data, world_id=1):
     return params
 
 
+def same_client(state, client):
+    saved = state.get("client")
+    return bool(saved) and Path(saved).resolve() == Path(client).resolve()
+
+
 def native_config_archive(client, state):
     source = client / "element/configs.pck"
     previous = (
-        state.get("files", {}).get("element/configs.pck", {})
-        if state.get("client") == str(client)
-        else {}
+        state.get("files", {}).get("element/configs.pck", {}) if same_client(state, client) else {}
     )
     if previous.get("baseline") and (
         digest(source) == previous["sha256"] or archive_assets_match(source, state)
@@ -182,9 +185,7 @@ def native_config_archive(client, state):
 
 def native_file(client, relative, state):
     source = client / relative
-    previous = (
-        state.get("files", {}).get(relative, {}) if state.get("client") == str(client) else {}
-    )
+    previous = state.get("files", {}).get(relative, {}) if same_client(state, client) else {}
     if previous.get("baseline") and source.exists() and digest(source) == previous["sha256"]:
         return baseline_path(previous["baseline"])
     return source
@@ -651,7 +652,7 @@ def build_patch(
         overview.convert("RGB").save(target / ("preview-" + realm + ".jpg"), quality=94)
     archive_source = client / "element/surfaces.pck"
     current_archive = None
-    if state.get("client") == str(client):
+    if same_client(state, client):
         old = state.get("files", {}).get("element/surfaces.pck")
         if (
             old
@@ -798,7 +799,7 @@ def install(client=DEFAULT_CLIENT, patch=None):
         )
     statefile = ROOT / "installed.json"
     old = read_json(statefile, {})
-    if old and old.get("client") != str(client):
+    if old and not same_client(old, client):
         raise ValueError("Сначала удалите установленный набор из прежней папки клиента")
     for rel, sha in manifest["files"].items():
         safe_target(client, rel)

@@ -219,6 +219,18 @@ with tempfile.TemporaryDirectory(prefix="pw-atlas-verification-") as tmp:
         == b"original user minimap layout",
         "Repeat build scales the original layout, not an already enlarged one",
     )
+    if sys.platform == "win32":
+        import ctypes
+
+        short = ctypes.create_unicode_buffer(32768)
+        if ctypes.windll.kernel32.GetShortPathNameW(str(client), short, len(short)):
+            check(
+                c.native_file(
+                    Path(short.value), ui_rel, c.read_json(c.ROOT / "installed.json")
+                ).read_bytes()
+                == b"original user minimap layout",
+                "Windows short path keeps the original minimap baseline",
+            )
     ui_dest.write_bytes(b"user changed layout externally")
     n, p = c.uninstall()
     check(
