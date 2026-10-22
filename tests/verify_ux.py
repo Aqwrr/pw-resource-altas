@@ -44,7 +44,7 @@ def same_heights(widget):
 
 
 with tempfile.TemporaryDirectory(prefix="atlas-ux-") as tmp:
-    tmp = Path(tmp)
+    tmp = Path(tmp).resolve()
     c.ROOT = tmp / "Атлас"
     c.ROOT.mkdir()
     client = tmp / "Игры друга" / "Русский клиент с пробелами"
