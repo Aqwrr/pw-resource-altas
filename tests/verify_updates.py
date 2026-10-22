@@ -97,6 +97,7 @@ def setup(folder):
         "presets.json",
         "installed.json",
         "update-settings.json",
+        "activation.dat",
         "backups/original.bin",
         "glow-test/installed.json",
         "glow-test/backups/models.pck",
@@ -235,6 +236,7 @@ with tempfile.TemporaryDirectory(prefix="atlas-updater-tests-") as tmp:
         (
             "../escape",
             "settings.json",
+            "activation.dat",
             "installed.json",
             "update-settings.json",
             "backups/old.bin",

@@ -270,6 +270,7 @@ def verify_parser(client, config):
 
 
 def build_beacons(client, progress=lambda value: None, selected=None):
+    core.atlas_access.require_activated(core.ROOT)
     client = Path(client).resolve()
     config = core.read_json(core.ASSETS / "beacon-resources.json")
     verify_parser(client, config)
@@ -446,6 +447,7 @@ def _recover_interrupted(state):
 
 
 def install_beacons(client, progress=lambda value: None):
+    core.atlas_access.require_activated(core.ROOT)
     _stopped()
     client = Path(client).resolve()
     state = load_state()
@@ -522,6 +524,7 @@ def install_beacons(client, progress=lambda value: None):
 
 
 def remove_beacons(progress=lambda value: None):
+    core.atlas_access.require_activated(core.ROOT)
     state = load_state()
     if not state:
         return False

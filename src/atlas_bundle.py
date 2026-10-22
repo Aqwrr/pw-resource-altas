@@ -9,6 +9,7 @@ import atlas_glow as glow
 
 
 def install(client, beacons=True):
+    core.atlas_access.require_activated(core.ROOT)
     client = Path(client).resolve()
     if core.game_running():
         raise ValueError("Сначала полностью закройте игру.")

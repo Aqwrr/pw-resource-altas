@@ -16,6 +16,7 @@ import zlib
 import atlas_pck
 import atlas_client
 import atlas_minimap
+import atlas_access
 from atlas_markers import group_nodes, icon_offsets
 from atlas_routes import world_routes
 from datetime import datetime
@@ -29,7 +30,7 @@ ASSETS = (
     if getattr(sys, "frozen", False)
     else Path(os.environ.get("ATLAS_ASSETS_DIR", PROJECT / ".cache/assets"))
 )
-VERSION = "2.10"
+VERSION = "2.11"
 MAP_VERSION = "2.7"
 COLORS = {1: "#77ab75", 2: "#58a5b0", 3: "#c39b4d", 4: "#a285c9", 5: "#d48355"}
 DEFAULT_CLIENT = None
@@ -479,6 +480,7 @@ def build_patch(
     minimap_marker_size=24,
     routes=None,
 ):
+    atlas_access.require_activated(ROOT)
     client = require_supported_client(client or DEFAULT_CLIENT)
     routes = world_routes(routes, route)
     route = routes["world"]
@@ -770,6 +772,7 @@ def cleanup_legacy_empty_dirs(client):
 
 
 def install(client=DEFAULT_CLIENT, patch=None):
+    atlas_access.require_activated(ROOT)
     if not client:
         raise ValueError("Сначала укажите папку игры в настройке клиента.")
     client = Path(client).resolve()
@@ -884,6 +887,7 @@ def install(client=DEFAULT_CLIENT, patch=None):
 
 
 def uninstall():
+    atlas_access.require_activated(ROOT)
     statefile = ROOT / "installed.json"
     state = read_json(statefile)
     if not state:

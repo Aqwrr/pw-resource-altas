@@ -17,6 +17,9 @@ from atlas_updates_ui import UpdatesDialog
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtWidgets import QApplication, QPushButton, QInputDialog
 
+# Keep UI regression fixtures independent from the owner's private key.
+patch("atlas_access.require_activated").start()
+
 app = QApplication([])
 configure_app(app)
 real_root = c.ROOT

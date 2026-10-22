@@ -316,6 +316,8 @@ class CatalogDialog(QDialog):
 class Window(QMainWindow):
     def __init__(self, preview=False):
         super().__init__()
+        if not preview:
+            core.atlas_access.require_activated(core.ROOT)
         self.preview = preview
         self.items = core.resources()
         self.state = core.read_json(core.ROOT / "settings.json", {})
@@ -1406,6 +1408,10 @@ def main():
     )
     app = QApplication(sys.argv)
     configure_app(app)
+    from atlas_access_ui import ensure_activation
+
+    if not ensure_activation():
+        return
     window = Window(preview=options.screenshot)
     if window.state.get("window_maximized", False) and not options.screenshot:
         window.showMaximized()

@@ -22,3 +22,5 @@ credentials*
 .local/
 .ruff_cache/
 build/
+.private/
+activation.dat

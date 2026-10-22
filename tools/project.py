@@ -50,7 +50,9 @@ def test():
         "QT_QPA_PLATFORM": "offscreen",
     }
     for script in sorted((PROJECT / "tests").glob("verify_*.py")):
-        for scale in ("1", "1.5") if script.stem in ("verify_ux", "verify_help") else ("1",):
+        for scale in (
+            ("1", "1.5") if script.stem in ("verify_ux", "verify_help", "verify_access") else ("1",)
+        ):
             print(f"Проверка: {script.name}, масштаб {scale}", flush=True)
             run(sys.executable, script, env={**env, "QT_SCALE_FACTOR": scale})
 

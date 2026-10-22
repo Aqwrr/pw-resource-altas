@@ -8,6 +8,10 @@ from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 import atlas_core as c
+from unittest.mock import patch
+
+# These checks exercise map transactions; activation has separate real-DPAPI checks.
+patch("atlas_access.require_activated").start()
 
 
 def check(value, message):
