@@ -8,20 +8,25 @@ if __name__ == "__main__":
 
         sys.exit(helper_main(sys.argv[2]))
     if "--update-healthcheck" in sys.argv:
-        import os
+        try:
+            import os
 
-        os.environ["QT_QPA_PLATFORM"] = "offscreen"
-        from PySide6.QtWidgets import QApplication
-        from atlas_ui import Window, configure_app
-        import atlas_core
+            os.environ["QT_QPA_PLATFORM"] = "offscreen"
+            from PySide6.QtWidgets import QApplication
+            from atlas_ui import Window, configure_app
+            import atlas_core
 
-        if len(sys.argv) > 2 and sys.argv[2] != atlas_core.VERSION:
-            sys.exit(2)
-        app = QApplication([])
-        configure_app(app)
-        window = Window(preview=True)
-        app.processEvents()
-        window.close()
+            if len(sys.argv) > 2 and sys.argv[2] != atlas_core.VERSION:
+                sys.exit(2)
+            app = QApplication([])
+            configure_app(app)
+            window = Window(preview=True)
+            app.processEvents()
+            window.close()
+        except Exception:
+            # A windowed executable otherwise waits on its traceback dialog,
+            # preventing the updater from immediately restoring the old version.
+            sys.exit(1)
         sys.exit(0)
     import atlas_updates
     import atlas_core

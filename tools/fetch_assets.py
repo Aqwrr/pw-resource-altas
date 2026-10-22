@@ -19,7 +19,7 @@ def fetch(destination):
         return
     source = json.loads((PROJECT / "asset-source.json").read_text(encoding="utf-8"))
     with tempfile.TemporaryDirectory(prefix="atlas-assets-") as temporary:
-        folder = Path(temporary)
+        folder = Path(temporary).resolve()
         archive = folder / "resources.zip"
         digest = hashlib.sha256()
         request = urllib.request.Request(
